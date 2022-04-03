@@ -41,7 +41,7 @@ router.post('/',async function(req,res){
 router.get('/',async function(req,res){    
     try {
         const products= await Product.find()
-        console.log(products);
+        //console.log(products);
         return res.status(200).json({
             status:"sucess",
             products

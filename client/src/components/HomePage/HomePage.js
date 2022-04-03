@@ -4,13 +4,16 @@ import "./index.css"
 import bag from "../images/addtobag.jpg"
 import Product from "../Sub-Home/SubHome";
 import {Link} from "react-router-dom"
+//import getToken from "../utils/authOperations"
 
 
 function HomePage() {
     const [isSelected,setIsSelected]=useState(false)
     const [curproductid,setCurProductId]=useState(null)
     const [fake, setFake] = useState([]);
-    console.log(fake)
+    const [count,setCount]=useState(0)
+    console.log(count)
+    //console.log(fake)
     
     const toggleSelected=()=>{
         setIsSelected(!isSelected)
@@ -23,15 +26,23 @@ function HomePage() {
     }
     let id=curproductid
    // console.log(curproduct)
+   function getToken(){
+    if(window.localStorage){
+      return localStorage.getItem("token")
+    }
+    return ""
+  }
 
     useEffect(async() => {
+
         try {
-                const response = await fetch('http://localhost:5000/products',{
+                const response = await fetch('http://localhost:5000/api/products',{
                     method:'GET',
                     mode:'cors',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Credentials':'true'
+                        'Access-Control-Allow-Credentials':'true',
+                        authorization: `test ${getToken()}`
                       }
                 })
                 const productdata = await response.json();
@@ -46,6 +57,30 @@ function HomePage() {
         }
 
     }, [])
+    useEffect(async() => {
+        try {
+                const response = await fetch('http://localhost:5000/api/userproducts',{
+                    method:'GET',
+                    mode:'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Credentials':'true',
+                        authorization: `test ${getToken()}`
+                      }
+                })
+                const productdata = await response.json();
+                console.log(productdata)
+                if (!productdata.status === 200) {
+                    const error = new Error(response.error);
+                    throw error;
+                }        
+                setCount(productdata.products.length)
+        } catch (error) {
+            console.log(error)
+        }
+
+    }, [])
+
     //'https://fakestoreapi.com/products'
  
     //products()
@@ -53,7 +88,7 @@ function HomePage() {
     return (
         <div className="home">
             <div className="home-header">
-                <HeaderTwo />
+                <HeaderTwo  count={count}/>
             </div>
 
             <h2>PRODUCTS HOME PAGE</h2>
@@ -62,21 +97,27 @@ function HomePage() {
                     return (
                         <>
                             <div className="box" >
-                                <div className="content">
-                                    <div>
-                                    <img className="image" key={index} src={product.image}></img>
+                                
+                                    <div className="pimg">
+                                    <img className="image" key={index} src={product.image}/>
+                                    </div >
+                                    <div className="pdetails">
+                                    <div className="ptitle">
+                                    <h5 key={index} className="p-name">{product.title}</h5>
                                     </div>
-                                    <div>
-                                    <h5 key={index}>{product.title}</h5>
-                                    
+                                    <div className="pcategory">
                                     <h3 className="category" key={index}>Category: {product.category}</h3>
-                                    <h2 className="price" key={index}>Price: {product.price}</h2>
-                                    <button className="view-buttton" onClick={()=>handleClick(product)}>View</button>
-                                    {isSelected && <Product product={curproductid} handleSelected={toggleSelected}/>}
-                                    
-                                   
+
                                     </div>
-                                </div>
+                                    <div className="pprice">
+                                    <h2 className="price" key={index}>Rs: {product.price}</h2>
+                                    </div>
+                                    <div className="pbutton">
+                                    <button className="view-buttton" onClick={()=>handleClick(product)}>View</button>
+                                    </div>                                                   {isSelected && <Product product={curproductid} handleSelected={toggleSelected}/>}
+                                                                     
+                                    </div>
+                               
                                 
                             </div>
                         </>

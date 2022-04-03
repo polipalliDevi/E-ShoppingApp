@@ -2,6 +2,8 @@ const express=require('express');
 const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const router=express.Router();
+const dayjs = require("dayjs");
+
 
 router.use(bodyparser());
 
@@ -14,14 +16,15 @@ const UserProduct=require("../models/userProduct");
 
 router.post('/',async function(req,res){
     try {
-        const {productName,price,description,category,image}=req.body;
+        const {productName,cost,img,content,type}=req.body;
         const product=await UserProduct.create({
             productName,
+            cost,
+            img,
+            type,
+            content,
             userId:req.user,
-            price,
-            description,
-            category,
-            image
+            dateOrdered: dayjs().format("dddd, MMM D, h:mm A"),
             
         })
         console.log(product)
@@ -63,7 +66,7 @@ router.delete('/:id',async(req,res)=> {
     const post =await UserProduct.deleteOne({_id:req.params.id,userId:req.user})
     console.log(post)
     if (post.deletedCount>0){
-        res.json({
+        return res.status(200).json({
 
             status:"Post Delete",
            

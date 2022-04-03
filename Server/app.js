@@ -31,7 +31,7 @@ db.once("open", function () {
   console.log("Connected successfully");
 });
 //authentication 
-app.use("/userproducts", (req, res, next) => {
+app.use("/api", (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   //console.log(req.headers.authorization)
   var token = req.headers.authorization.split("test ")[1];
@@ -61,9 +61,9 @@ app.use('/register',registerRoute);
 //login
 app.use('/login',loginRoute);
 //product 
-app.use('/products',productRouter)
+app.use('/api/products',productRouter)
 
-app.use("/userproducts",userProductROuter)
+app.use("/api/userproducts",userProductROuter)
 
 //listening to port
 app.listen(port,()=>{

@@ -14,7 +14,7 @@ router.use(bodyparser());
 router.post("/",async (req,res)=>{
     console.log(req.body)
     try {
-        const{name,email,password,phone,state,district,address,pincode}=req.body;
+        const{name,email,password,phone,city}=req.body;
         const existingUser=await User.findOne({email:email});
         if(existingUser){
             return res.send("email already exists")
@@ -31,10 +31,7 @@ router.post("/",async (req,res)=>{
                 email,
                 password: hash,
                 phone,
-                state,
-                district,
-                address,
-                pincode
+                city
             });
             res.status(200).json({
                 status:"success",

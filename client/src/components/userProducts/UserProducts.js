@@ -4,15 +4,23 @@ import "./index.css"
 
 function UserProducts(){
     const [items,setItems]=useState([])
-    
+    function getToken(){
+        if(window.localStorage){
+          return localStorage.getItem("token")
+        }
+        return ""
+      }
+    const count=items.length
+    console.log(count)
     useEffect(async() => {
         try {
-                const response = await fetch('http://localhost:5000/products',{
+                const response = await fetch('http://localhost:5000/api/userproducts',{
                     method:'GET',
                     mode:'cors',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Credentials':'true'
+                        'Access-Control-Allow-Credentials':'true',
+                        authorization: `test ${getToken()}`
                       }
                 })
                 const productdata = await response.json();
@@ -27,10 +35,34 @@ function UserProducts(){
         }
 
     }, [])
+    async function handleClick(item){
+        let id =item._id 
+        try {
+            const response = await fetch(`http://localhost:5000/api/userproducts/${id}`,{
+                method:'DELETE',
+                mode:'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Credentials':'true',
+                    authorization: `test ${getToken()}`
+                }
+                
+            })
+            const data = await response.json()
+            if(data.status==="Post Delete"){
+                window.alert("sucessfully deleted")
+                window.location.href = "/userproducts";
+            }else{
+                window.alert("not deleted from your product list")
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return(
         <div className="user-main">
             <div className="user-header">
-                <HeaderTwo/>
+                <HeaderTwo count={count}/>
             </div>
             <h2>YOUR PRODUCTS PAGE</h2>
             <div className="user-cont">
@@ -39,14 +71,14 @@ function UserProducts(){
                         <div className="user-box">
                         <div className="user-bx-cont">
                             <div>
-                            <img className="user-image" src={item.image}/>
+                            <img className="user-image" src={item.img}/>
                             </div>                     
                         
                         <div>
-                            <h5>{item.title}</h5>
-                            <h3>{item.category}</h3>
-                            <h2 className="user-price">Price: {item.price}</h2>
-                            <button className="user-remove-btn">Remove from Cart</button>
+                            <h5>{item.productName}</h5>
+                            <h3>category:{item.type}</h3>
+                            <h2 className="user-price">Rs : {item.cost}</h2>
+                            <button className="user-remove-btn" onClick={()=>{handleClick(item)}}>Remove from Cart</button>
                         </div>
                         </div>
                     </div>

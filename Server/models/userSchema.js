@@ -6,10 +6,7 @@ const userSchema = new Schema({
     email:{type:String,unique:true,required:true},
     password:{type:String,required:true},
     phone:{type:Number,required:true},
-    state:{type:String},
-    district:{type:String},
-    address:{type:String},
-    pincode:{type:Number}, 
+    city:{type:String,required:true}
 },{timestamps:true});
 
 const User=mongoose.model("User",userSchema);
