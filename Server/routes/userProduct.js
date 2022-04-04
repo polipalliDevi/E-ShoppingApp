@@ -46,7 +46,7 @@ router.post('/',async function(req,res){
 //getting all products
 router.get('/',async function(req,res){    
     try {
-        const products= await UserProduct.find()
+        const products= await UserProduct.find({userId:req.user})
         console.log(products.length);
         return res.status(200).json({
             status:"sucess",
